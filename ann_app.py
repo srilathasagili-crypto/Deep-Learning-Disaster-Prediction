@@ -1,9 +1,7 @@
-from flask import Flask, request, jsonify
+import streamlit as st
 import numpy as np
 import tensorflow as tf
 import pickle
-
-app = Flask(__name__)
 
 # Load model
 model = tf.keras.models.load_model("model.keras")
@@ -12,35 +10,25 @@ model = tf.keras.models.load_model("model.keras")
 with open("preprocessor.pkl", "rb") as f:
     preprocessor = pickle.load(f)
 
-@app.route("/")
-def home():
-    return "ANN Model API is running!"
+st.title("🌍 Disaster Prediction System")
 
-@app.route("/predict", methods=["POST"])
-def predict():
+st.write("Enter input values below:")
+
+# Example: adjust based on your features
+input_values = st.text_input("Enter comma-separated values")
+
+if st.button("Predict"):
     try:
-        data = request.get_json()
-
-        # Convert input to array (assumes JSON list of features)
-        input_data = np.array(data["input"]).reshape(1, -1)
+        # Convert input
+        input_data = np.array([float(i) for i in input_values.split(",")]).reshape(1, -1)
 
         # Preprocess
-        processed_data = preprocessor.transform(input_data)
+        processed = preprocessor.transform(input_data)
 
-        # Prediction
-        prediction = model.predict(processed_data)
+        # Predict
+        prediction = model.predict(processed)
 
-        # If classification (binary/multiclass)
-        result = prediction.tolist()
-
-        return jsonify({
-            "prediction": result
-        })
+        st.success(f"Prediction: {prediction.tolist()}")
 
     except Exception as e:
-        return jsonify({
-            "error": str(e)
-        })
-
-if __name__ == "__main__":
-    app.run(debug=True)
+        st.error(str(e))
