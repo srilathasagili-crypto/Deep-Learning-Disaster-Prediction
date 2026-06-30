@@ -1,4 +1,4 @@
-import gradio as gr
+import streamlit as st
 import numpy as np
 import pickle
 import tensorflow as tf
@@ -10,7 +10,7 @@ model = tf.keras.models.load_model("model.keras", compile=False)
 with open("preprocessor.pkl", "rb") as f:
     preprocessor = pickle.load(f)
 
-# IMPORTANT: match these with your dataset
+# Feature names
 feature_names = [
     "disaster_type",
     "latitude",
@@ -23,31 +23,31 @@ feature_names = [
     "infrastructure_damage_index"
 ]
 
-# Prediction function
-def predict(*inputs):
+st.title("🌍 Disaster Prediction System")
+st.write("Enter details below to predict whether it is a major disaster or not.")
+
+# Input UI
+inputs = []
+
+for feature in feature_names:
+    value = st.number_input(f"{feature}", value=0.0)
+    inputs.append(value)
+
+# Predict button
+if st.button("Predict"):
     try:
-        # convert input to numpy array
         data = np.array(inputs).reshape(1, -1)
 
-        # preprocessing
         processed = preprocessor.transform(data)
 
-        # prediction
         prediction = model.predict(processed)
 
-        return f"🌍 Prediction Class: {np.argmax(prediction)}"
+        result = np.argmax(prediction)
+
+        if result == 1:
+            st.error("🚨 Major Disaster Predicted")
+        else:
+            st.success("✅ Not a Major Disaster")
 
     except Exception as e:
-        return f"❌ Error: {str(e)}"
-
-
-# UI
-demo = gr.Interface(
-    fn=predict,
-    inputs=[gr.Number(label=name) for name in feature_names],
-    outputs="text",
-    title="🌍 Disaster Prediction System",
-    description="Enter disaster details and click Predict"
-)
-
-demo.launch()
+        st.error(f"Error: {str(e)}")
