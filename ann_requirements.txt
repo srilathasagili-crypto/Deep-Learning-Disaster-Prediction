@@ -1,5 +1,4 @@
-flask
+streamlit
 tensorflow
 numpy
 scikit-learn
-pickle-mixin
