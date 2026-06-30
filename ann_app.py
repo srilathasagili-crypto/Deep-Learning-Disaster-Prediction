@@ -1,7 +1,6 @@
 import streamlit as st
 import numpy as np
 import pickle
-import tensorflow as tf
 
 # Load model
 model = tf.keras.models.load_model("model.keras", compile=False)
