@@ -1,6 +1,6 @@
-streamlit
 numpy
 scikit-learn
 pickle-mixin
-tensorflow==2.15.0
+streamlit
+tensorflow
 keras==2.15.0
