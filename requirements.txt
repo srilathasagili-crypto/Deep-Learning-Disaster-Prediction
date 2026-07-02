@@ -1,7 +1,6 @@
-numpy
+numpy<2.0.0
 scikit-learn
-pickle-mixin
 streamlit
 tensorflow-cpu==2.15.0
 keras==2.15.0
-
+pickle-mixin
